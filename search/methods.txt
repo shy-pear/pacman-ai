@@ -1,0 +1,105 @@
+def uniformCostSearch(problem):
+    """Search the node of least total cost first."""
+    "*** YOUR CODE HERE ***"
+    root = problem.getStartState()
+    pqueue = util.PriorityQueue()
+
+    actions = []
+    visited = []
+    priority = 0
+    pqueue.push((root, actions), priority)
+
+    while not pqueue.isEmpty():
+        """get current node and add to visited"""
+        currentNode, actions = pqueue.pop()
+        
+        if currentNode not in visited:
+            visited.append(currentNode)
+
+        """if current node is the goal, return all actions"""
+        if problem.isGoalState(currentNode): return actions
+        
+        """get all successors, and if the successors not visited, 
+        push to the priority queue"""
+        successors = problem.getSuccessors(currentNode)
+        for nextNode, action, cost  in successors:
+            if nextNode not in visited and nextNode not in (item[2][0] for item in pqueue.heap):
+                nextActions = actions + [action]
+                nextPriority = problem.getCostOfActions(nextActions)
+                pqueue.push((nextNode, nextActions), nextPriority)
+
+    
+    return None
+
+
+def uniformCostSearch(problem):
+    """Search the node of least total cost first."""
+    "*** YOUR CODE HERE ***"
+    root = problem.getStartState()
+    pqueue = util.PriorityQueue()
+
+    actions = []
+    visited = []
+    priority = 0
+    pqueue.push((root, actions), priority)
+
+    while not pqueue.isEmpty():
+        currentNode, actions = pqueue.pop()
+        
+        if currentNode not in visited:
+            visited.append(currentNode)
+
+        if problem.isGoalState(currentNode): return actions
+        
+        successors = problem.getSuccessors(currentNode)
+        for nextNode, action, cost  in successors:
+            nextActions = actions + [action]
+            nextPriority = problem.getCostOfActions(nextActions)
+             
+            if nextNode not in visited and nextNode in (item[2][0] for item in pqueue.heap):
+
+                for item in pqueue.heap:
+                    if nextNode == item[2][0]:
+                        if nextPriority < problem.getCostOfActions(item[2][1]):
+                            pqueue.push((nextNode, nextActions), nextPriority)
+
+            
+            elif nextNode not in visited and nextNode not in (item[2][0] for item in pqueue.heap):
+                pqueue.push((nextNode, nextActions), nextPriority)
+
+    
+    return None
+
+
+
+def aStarSearch(problem, heuristic=nullHeuristic):
+    """Search the node that has the lowest combined cost and heuristic first."""
+    "*** YOUR CODE HERE ***"
+
+    # Creates an empty PriorityQueue.
+    pqueue = util.PriorityQueue()
+    visited = []
+    actions = []
+    priority = 0  
+
+    root = problem.getStartState()
+    pqueue.push((root, actions), priority)
+
+    while not pqueue.isEmpty():
+
+        currentNode, actions = pqueue.pop()
+
+        if currentNode not in visited:
+            visited.append(currentNode)
+
+        if problem.isGoalState(currentNode): return actions
+
+        successors = problem.getSuccessors(currentNode)
+        for nextNode, action, cost in successors:
+            if nextNode not in visited and nextNode not in (item[2][0] for item in pqueue.heap):
+                nextActions = actions + [action]
+                nextHeuristic = heuristic(nextNode, problem)
+                    
+                nextPriority = nextHeuristic + problem.getCostOfActions(nextActions)
+                pqueue.push((nextNode, nextActions), nextPriority)
+    return None
